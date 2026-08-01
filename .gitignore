@@ -1,0 +1,21 @@
+# Local scratch / issues (conteúdo local, não versionar)
+.scratch/*
+!.scratch/.gitkeep
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.class
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Java build artifacts (examples)
+**/target/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
