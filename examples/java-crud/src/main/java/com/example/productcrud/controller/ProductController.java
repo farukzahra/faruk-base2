@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/products")
-@Tag(name = "Products", description = "Cadastro de produtos")
+@Tag(name = "Products", description = "Product catalog CRUD")
 public class ProductController {
 
     private final ProductService service;

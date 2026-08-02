@@ -1,6 +1,6 @@
-# Product CRUD (exemplo)
+# Product CRUD (exemplo Java)
 
-API REST de cadastro de produtos — exemplo Spring Boot + Docker para testar skills e servir de template reutilizável.
+API REST de cadastro de produtos — template **Spring Boot + Docker** do harness; contrato HTTP de referência para o irmão `examples/fastapi-crud`.
 
 ## Language
 
@@ -26,5 +26,7 @@ _Avoid_: entidade, model *(Product é a entidade JPA; ProductResponse é a proje
 
 ## Convenções deste exemplo
 
-- Documentação (este arquivo, ADRs, README, mensagens HTTP): **pt-BR**
-- Código-fonte (classes, rotas, variáveis, commits): **inglês**
+- Documentação (este arquivo, ADRs, README): **pt-BR**
+- Código-fonte (classes, rotas, variáveis, testes, mensagens HTTP, commits): **inglês**
+- Contrato HTTP compartilhado com `fastapi-crud`: `/api/products`, erros `{ "error": "..." }`, health em `/actuator/health`
+- Listagem: `GET /api/products` ordenado por **`createdAt` descendente** (mais recentes primeiro)

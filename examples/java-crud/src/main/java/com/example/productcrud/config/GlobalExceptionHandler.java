@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .collect(Collectors.joining("; "));
         if (message.isBlank()) {
-            message = "Dados inválidos";
+            message = "Invalid payload";
         }
         return ResponseEntity.badRequest().body(Map.of("error", message));
     }
@@ -36,6 +36,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleGeneric(Exception ex) {
         log.error("Unhandled error", ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of("error", "Erro interno"));
+                .body(Map.of("error", "Internal error"));
     }
 }

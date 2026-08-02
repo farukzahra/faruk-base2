@@ -31,8 +31,8 @@ class ProductCrudIntegrationTest {
     @Test
     void crudLifecycle() {
         ProductRequest request = new ProductRequest(
-                "Teclado Mecânico",
-                "Switch blue, layout ABNT2",
+                "Mechanical Keyboard",
+                "Blue switches, ABNT2 layout",
                 new BigDecimal("349.90"),
                 15
         );
@@ -40,7 +40,7 @@ class ProductCrudIntegrationTest {
         ResponseEntity<ProductResponse> created = rest.postForEntity("/api/products", request, ProductResponse.class);
         assertThat(created.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(created.getBody()).isNotNull();
-        assertThat(created.getBody().name()).isEqualTo("Teclado Mecânico");
+        assertThat(created.getBody().name()).isEqualTo("Mechanical Keyboard");
 
         Long id = created.getBody().id();
 
@@ -50,8 +50,8 @@ class ProductCrudIntegrationTest {
         assertThat(fetched.getBody().price()).isEqualByComparingTo("349.90");
 
         ProductRequest updated = new ProductRequest(
-                "Teclado Mecânico Pro",
-                "Switch brown",
+                "Mechanical Keyboard Pro",
+                "Brown switches",
                 new BigDecimal("399.90"),
                 10
         );
@@ -64,7 +64,7 @@ class ProductCrudIntegrationTest {
         );
         assertThat(updatedResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(updatedResponse.getBody()).isNotNull();
-        assertThat(updatedResponse.getBody().name()).isEqualTo("Teclado Mecânico Pro");
+        assertThat(updatedResponse.getBody().name()).isEqualTo("Mechanical Keyboard Pro");
 
         ResponseEntity<List<ProductResponse>> list = rest.exchange(
                 "/api/products",
@@ -96,6 +96,39 @@ class ProductCrudIntegrationTest {
     }
 
     @Test
+    void returnsNotFoundWhenUpdatingMissingProduct() {
+        ProductRequest request = new ProductRequest(
+                "Missing Product",
+                "Should not persist",
+                new BigDecimal("10.00"),
+                1
+        );
+
+        ResponseEntity<Map> response = rest.exchange(
+                "/api/products/9999",
+                HttpMethod.PUT,
+                new HttpEntity<>(request),
+                Map.class
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getBody()).containsEntry("error", ProductService.PRODUCT_NOT_FOUND);
+    }
+
+    @Test
+    void returnsNotFoundWhenDeletingMissingProduct() {
+        ResponseEntity<Map> response = rest.exchange(
+                "/api/products/9999",
+                HttpMethod.DELETE,
+                null,
+                Map.class
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getBody()).containsEntry("error", ProductService.PRODUCT_NOT_FOUND);
+    }
+
+    @Test
     void rejectsInvalidProductPayload() {
         ProductRequest invalid = new ProductRequest("", null, new BigDecimal("0.00"), -1);
 
@@ -103,6 +136,70 @@ class ProductCrudIntegrationTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(response.getBody()).containsKey("error");
+    }
+
+    @Test
+    void rejectsPriceBelowMinimum() {
+        ProductRequest invalid = new ProductRequest(
+                "Cheap Item",
+                "Below minimum price",
+                new BigDecimal("0.00"),
+                1
+        );
+
+        ResponseEntity<Map> response = rest.postForEntity("/api/products", invalid, Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody()).containsKey("error");
+    }
+
+    @Test
+    void rejectsNegativeStockQuantity() {
+        ProductRequest invalid = new ProductRequest(
+                "Invalid Stock",
+                "Negative quantity",
+                new BigDecimal("9.99"),
+                -5
+        );
+
+        ResponseEntity<Map> response = rest.postForEntity("/api/products", invalid, Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody()).containsKey("error");
+    }
+
+    @Test
+    void listsProductsNewestFirst() {
+        ProductRequest older = new ProductRequest(
+                "Older Product",
+                "Created first",
+                new BigDecimal("19.99"),
+                5
+        );
+        ProductRequest newer = new ProductRequest(
+                "Newer Product",
+                "Created second",
+                new BigDecimal("29.99"),
+                3
+        );
+
+        ResponseEntity<ProductResponse> firstCreated = rest.postForEntity("/api/products", older, ProductResponse.class);
+        ResponseEntity<ProductResponse> secondCreated = rest.postForEntity("/api/products", newer, ProductResponse.class);
+
+        assertThat(firstCreated.getBody()).isNotNull();
+        assertThat(secondCreated.getBody()).isNotNull();
+
+        ResponseEntity<List<ProductResponse>> list = rest.exchange(
+                "/api/products",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {}
+        );
+
+        assertThat(list.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(list.getBody())
+                .extracting(ProductResponse::name)
+                .containsExactly("Newer Product", "Older Product");
     }
 
     @Test

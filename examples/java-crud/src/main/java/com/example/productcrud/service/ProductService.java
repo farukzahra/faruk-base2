@@ -14,7 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Transactional
 public class ProductService {
 
-    public static final String PRODUCT_NOT_FOUND = "Produto não encontrado";
+    public static final String PRODUCT_NOT_FOUND = "Product not found";
 
     private final ProductRepository repository;
 
@@ -24,7 +24,7 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public List<ProductResponse> findAll() {
-        return repository.findAll().stream().map(ProductResponse::from).toList();
+        return repository.findAllByOrderByCreatedAtDesc().stream().map(ProductResponse::from).toList();
     }
 
     @Transactional(readOnly = true)

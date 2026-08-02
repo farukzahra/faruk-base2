@@ -9,6 +9,7 @@ Exemplo para testar o repositório [mattpocock/skills](https://github.com/mattpo
 | Java | 21 (LTS) |
 | Spring Boot | 4.1.0 |
 | PostgreSQL | 17 (Alpine) |
+| Schema | Liquibase |
 
 ## Subir
 
@@ -26,6 +27,34 @@ Aguarde ~1–2 min na primeira build (Maven baixa dependências).
 
 A API fica em **http://localhost:8090** (porta 8090 no host → 8080 no container). Se 8090 estiver ocupada, altere em `docker-compose.yml`.
 
+Profile padrão: **`dev`** (Swagger ligado). Para simular produção sem Swagger:
+
+```bash
+SPRING_PROFILES_ACTIVE=prod docker compose up --build -d
+```
+
+## Acesso ao banco (editor SQL)
+
+Com `docker compose up -d` rodando, conecte seu editor (DBeaver, DataGrip, pgAdmin, etc.):
+
+| Campo | Valor |
+|-------|--------|
+| Host | `localhost` |
+| Porta | `5433` |
+| Database | `products` |
+| Usuário | `products` |
+| Senha | `products` |
+
+**JDBC:** `jdbc:postgresql://localhost:5433/products`
+
+**psql via Docker:**
+
+```bash
+docker compose exec db psql -U products -d products
+```
+
+A porta **5433** evita conflito com PostgreSQL nativo (5432) e com o `fastapi-crud` (5434).
+
 ## Validar
 
 ```bash
@@ -38,13 +67,13 @@ curl http://localhost:8090/api/products
 # Criar
 curl -X POST http://localhost:8090/api/products \
   -H "Content-Type: application/json" \
-  -d "{\"name\":\"Mouse Gamer\",\"description\":\"8000 DPI\",\"price\":129.90,\"stockQuantity\":50}"
+  -d "{\"name\":\"Gaming Mouse\",\"description\":\"8000 DPI\",\"price\":129.90,\"stockQuantity\":50}"
 
 # Listar / buscar / atualizar / excluir
 curl http://localhost:8090/api/products/1
 curl -X PUT http://localhost:8090/api/products/1 \
   -H "Content-Type: application/json" \
-  -d "{\"name\":\"Mouse Gamer Pro\",\"description\":\"12000 DPI\",\"price\":159.90,\"stockQuantity\":40}"
+  -d "{\"name\":\"Gaming Mouse Pro\",\"description\":\"12000 DPI\",\"price\":159.90,\"stockQuantity\":40}"
 curl -X DELETE http://localhost:8090/api/products/1
 ```
 
@@ -52,18 +81,18 @@ curl -X DELETE http://localhost:8090/api/products/1
 
 | Método | Rota | Descrição |
 |--------|------|-----------|
-| GET | `/api/products` | Lista produtos |
+| GET | `/api/products` | Lista produtos (ordenado por `createdAt` DESC) |
 | GET | `/api/products/{id}` | Busca por ID |
 | POST | `/api/products` | Cria produto |
 | PUT | `/api/products/{id}` | Atualiza produto |
 | DELETE | `/api/products/{id}` | Remove produto |
 | GET | `/actuator/health` | Health check |
-| GET | `/swagger-ui/index.html` | Swagger UI (documentação interativa) |
-| GET | `/v3/api-docs` | OpenAPI JSON |
+| GET | `/swagger-ui/index.html` | Swagger UI (**profile dev**) |
+| GET | `/v3/api-docs` | OpenAPI JSON (**profile dev**) |
 
 ## Swagger
 
-Documentação interativa da API:
+Documentação interativa (somente com profile `dev`, padrão no compose):
 
 - **Swagger UI:** http://localhost:8090/swagger-ui/index.html
 - **OpenAPI JSON:** http://localhost:8090/v3/api-docs
@@ -74,11 +103,17 @@ Documentação interativa da API:
 
 ```json
 {
-  "name": "Nome do produto",
-  "description": "Descrição opcional",
+  "name": "Product name",
+  "description": "Optional description",
   "price": 99.90,
   "stockQuantity": 10
 }
+```
+
+### Erros
+
+```json
+{ "error": "Product not found" }
 ```
 
 ## Parar
@@ -105,15 +140,13 @@ O build da imagem `app` também executa `mvn test` antes do `package`.
 mvn test
 ```
 
-## Fluxo /ask-matt usado
+Cobertura: ciclo CRUD, 404 (GET/PUT/DELETE), validação inválida, ordenação por `createdAt` DESC, health.
 
-Escopo claro → **implement** direto (sem multi-sessão):
+## Fluxo /ask-fmz usado
 
 ```
-/implement  →  CRUD + Docker + testes de integração
+/ask-fmz → /grill-with-docs → /implement
 ```
-
-Para features maiores neste repo, use `/grill-with-docs` → `/to-spec` → `/to-tickets` → `/implement`.
 
 ## Documentação de domínio
 
