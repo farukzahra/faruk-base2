@@ -1,0 +1,14 @@
+---
+description: Usar Mermaid (ou ferramenta renderizável) para diagramas — nunca ASCII na mão
+alwaysApply: true
+---
+
+# Diagramas: sempre Mermaid
+
+Ao documentar fluxos, arquitetura ou estados neste repositório (e nas respostas ao usuário sobre este projeto):
+
+1. **Use Mermaid** (`flowchart`, `sequenceDiagram`, `stateDiagram`, etc.) ou outro formato que renderize no Markdown/GitHub/Cursor.
+2. **Nunca** desenhe diagramas ASCII na mão (setas com `↓`, caixas com caracteres, árvores em texto).
+3. **Atualize o Mermaid** quando o fluxo mudar — o diagrama é a fonte visual oficial junto com o texto.
+
+Exceções: blocos de código de terminal, snippets de config e exemplos de CLI (não são diagramas).

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "skills": {
-    "ask-matt": {
+    "ask-fmz": {
       "source": "mattpocock/skills",
       "sourceType": "github",
       "skillPath": "skills/engineering/ask-matt/SKILL.md",
@@ -12,6 +12,12 @@
       "sourceType": "github",
       "skillPath": "skills/in-progress/batch-grill-me/SKILL.md",
       "computedHash": "574a9c661c3ba9682f33aa924c0638a9553c5b110e45f73d4c55efab0ecbe2fe"
+    },
+    "caveman-commit": {
+      "source": "farukzahra/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/caveman-commit/SKILL.md",
+      "computedHash": "f028652defd5fdeddcce2994083cb1a7b201ee827bba8e2495546ee159fca3de"
     },
     "claude-handoff": {
       "source": "mattpocock/skills",
@@ -151,17 +157,23 @@
       "skillPath": "skills/misc/scaffold-exercises/SKILL.md",
       "computedHash": "0f8154a7be9fc5ebe6ae0550d520259fadfdd512c166cb7f137f8e697aae4017"
     },
-    "setup-matt-pocock-skills": {
-      "source": "mattpocock/skills",
+    "semantic-version": {
+      "source": "farukzahra/agent-skills",
       "sourceType": "github",
-      "skillPath": "skills/engineering/setup-matt-pocock-skills/SKILL.md",
-      "computedHash": "509889c1c4970485fdd558df50142d4bf28d6f40866923637c32e64689c9fbda"
+      "skillPath": "skills/semantic-version/SKILL.md",
+      "computedHash": "0d736dc574837851509a5c8438bd5441f251632b0101af45c437e2d0cc6a97f5"
     },
     "setup-pre-commit": {
       "source": "mattpocock/skills",
       "sourceType": "github",
       "skillPath": "skills/misc/setup-pre-commit/SKILL.md",
       "computedHash": "68ddf950f4848ae057b33a940533447d3b5ae34f21e09701e263879f973daa38"
+    },
+    "setup-skills": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/setup-matt-pocock-skills/SKILL.md",
+      "computedHash": "509889c1c4970485fdd558df50142d4bf28d6f40866923637c32e64689c9fbda"
     },
     "setup-ts-deep-modules": {
       "source": "mattpocock/skills",

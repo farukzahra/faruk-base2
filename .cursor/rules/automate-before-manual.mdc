@@ -1,0 +1,22 @@
+---
+description: Antes de pedir passo manual, buscar credenciais no cofre central C:\repo\secrets
+alwaysApply: true
+---
+
+# Automatizar antes de pedir ao usuário
+
+Antes de pedir clicar no browser, instalar app, configurar DNS, criar token, etc.:
+
+1. **Tentar executar sozinho** — checar PAT, chave SSH, script, API ou credencial documentada.
+2. **Cofre central (Faruk)** — `C:\repo\secrets\`:
+   - GitHub PAT: `github\pat.txt` ou `gh auth` (keyring)
+   - SSH deploy VPS: `vps\ssh\github-actions-vps-shared`
+   - Inventário VPS: `vps\inventory.md`
+   - `.env` produção por app: `projects\<app>.env`
+   - Templates CI: `templates\`
+3. **Por repo** — `docs/agents/secrets.md`, `docs/deploy-vps.md`, `secrets.local.md`, `.env.example`.
+4. **Azure** — `C:\repo\secrets\github\azure-subscription-id.txt`; service principal em `github\azure-service-principal.json` se existir.
+
+Só pedir ação manual quando não for possível automatizar (OAuth, 2FA, Registro.br).
+
+**Nunca** colar valores de secrets no chat ou em commits.

@@ -6,8 +6,8 @@ Referência em português de todos os comandos (`/nome-da-skill`) instalados nes
 
 1. Digite o comando no chat do Cursor, por exemplo: `/grill-with-docs quero um CRUD Spring Boot`
 2. Você **não precisa** chamar cada skill manualmente — muitas encadeiam outras por baixo (veja [Encadeamento automático](#encadeamento-automático))
-3. Se não souber por onde começar, use **`/ask-matt`**
-4. Rode **`/setup-matt-pocock-skills`** uma vez por repositório antes do primeiro fluxo de engenharia
+3. Se não souber por onde começar, use **`/ask-fmz`**
+4. Rode **`/setup-skills`** uma vez por repositório antes do primeiro fluxo de engenharia
 
 ### Tipos de skill
 
@@ -22,25 +22,47 @@ Referência em português de todos os comandos (`/nome-da-skill`) instalados nes
 
 Fluxo recomendado para construir uma feature do zero:
 
+```mermaid
+flowchart TD
+  subgraph pre ["Pré-requisito · 1× por repo"]
+    Setup["/setup-skills<br/>tracker, labels, docs de domínio"]
+  end
+
+  Start([Ideia nova]) --> Ask["/ask-fmz<br/>Não sabe por onde começar?"]
+  Setup -.-> Start
+
+  Ask --> Repo{Codebase<br/>existente?}
+  Repo -->|Sim| Grill["/grill-with-docs<br/>Alinhar requisitos · CONTEXT + ADRs"]
+  Repo -->|Não| GrillMe["/grill-me<br/>Mesma entrevista, sem salvar no repo"]
+
+  Grill --> Proto{Precisa ver<br/>código ou UI?}
+  GrillMe --> Proto
+  Proto -->|Sim| HandoffOut["/handoff → sessão nova"]
+  HandoffOut --> Prototype["/prototype<br/>Código descartável"]
+  Prototype --> HandoffBack["/handoff de volta"]
+  HandoffBack --> Scope
+  Proto -->|Não| Scope{Multi-sessão<br/>ou feature pequena?}
+
+  Scope -->|Multi-sessão| Spec["/to-spec<br/>Conversa → spec"]
+  Spec --> Tickets["/to-tickets<br/>Spec → tickets com blockers"]
+  Tickets --> Implement
+
+  Scope -->|Mesma sessão| Implement["/implement<br/>Construir a partir do alinhamento"]
+
+  subgraph build ["Por ticket · contexto novo a cada um"]
+    Implement --> TDD["/tdd<br/>Red → green → refactor"]
+    TDD --> Review["/code-review<br/>Standards + Spec"]
+    Review --> Commit([Commit])
+  end
+
+  Freeform["Pedido livre sem /comando<br/>ex.: faça um CRUD"] -.->|fora deste workflow| DirectCode([Agente codifica direto])
 ```
-/ask-matt                    ← não sabe por onde começar? comece aqui
-     ↓
-/grill-with-docs             ← alinhar requisitos (com codebase)
-     ↓ (opcional)
-/prototype                     ← se precisar ver código/UI descartável
-     ↓
-/to-spec                       ← virar spec (se multi-sessão)
-     ↓
-/to-tickets                    ← quebrar em tickets
-     ↓
-/implement                     ← construir (puxa /tdd e /code-review)
-```
 
-**Sem codebase ainda?** Troque `/grill-with-docs` por `/grill-me`.
+**Sem codebase ainda?** Use `/grill-me` no lugar de `/grill-with-docs` (ramo esquerdo após `/ask-fmz`).
 
-**Feature pequena, mesma sessão?** Pule `/to-spec` e `/to-tickets` — vá direto de `/grill-with-docs` para `/implement`.
+**Feature pequena, mesma sessão?** Pule `/to-spec` e `/to-tickets` — vá direto de `/grill-with-docs` (ou `/grill-me`) para `/implement`.
 
-**Pedido livre** (*"faça um CRUD"*) **sem** `/comando` → o agente codifica direto, **fora** deste workflow.
+**Pedido livre** (*"faça um CRUD"*) **sem** `/comando` → o agente codifica direto, **fora** deste workflow (nó tracejado no diagrama).
 
 ---
 
@@ -65,8 +87,8 @@ Skills para trabalho de código no dia a dia.
 
 | Comando | Tipo | Descrição |
 |---------|------|-----------|
-| `/ask-matt` | User | **Roteador.** Descreva sua situação e ele indica qual skill ou fluxo usar. Use quando não lembrar qual comando chamar. |
-| `/setup-matt-pocock-skills` | User | **Setup inicial (1× por repo).** Configura issue tracker, labels de triagem e layout de docs de domínio (`docs/agents/`). |
+| `/ask-fmz` | User | **Roteador.** Descreva sua situação e ele indica qual skill ou fluxo usar. Use quando não lembrar qual comando chamar. |
+| `/setup-skills` | User | **Setup inicial (1× por repo).** Configura issue tracker, labels de triagem e layout de docs de domínio (`docs/agents/`). |
 
 ### Planejamento e alinhamento
 
@@ -161,8 +183,8 @@ Ferramentas de workflow geral, não específicas de código.
 
 | Comando | Resumo em uma linha |
 |---------|---------------------|
-| `/ask-matt` | Qual skill usar? Roteador de fluxos. |
-| `/setup-matt-pocock-skills` | Setup 1×: tracker, labels, docs. |
+| `/ask-fmz` | Qual skill usar? Roteador de fluxos. |
+| `/setup-skills` | Setup 1×: tracker, labels, docs. |
 | `/grill-with-docs` | Entrevista + docs de domínio (com repo). |
 | `/grill-me` | Entrevista sem salvar (sem repo). |
 | `/batch-grill-me` | Entrevista em lote, rodada por rodada. |
@@ -220,7 +242,7 @@ Situações que **não** começam com uma ideia nova, mas convergem no fluxo pri
 
 ## Configuração deste repo
 
-Após `/setup-matt-pocock-skills`, a config fica em:
+Após `/setup-skills`, a config fica em:
 
 | Arquivo | Conteúdo |
 |---------|----------|
@@ -234,7 +256,7 @@ Após `/setup-matt-pocock-skills`, a config fica em:
 
 ## Dicas
 
-- **Não lembra o comando?** → `/ask-matt`
+- **Não lembra o comando?** → `/ask-fmz`
 - **Feature nova com repo existente?** → `/grill-with-docs`
 - **Já tem spec/ticket pronto?** → `/implement`
 - **Só quer TDD num comportamento?** → `/tdd` (ou mencione "test-first")
