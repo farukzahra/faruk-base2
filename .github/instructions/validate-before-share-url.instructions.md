@@ -1,0 +1,14 @@
+---
+description: Validar URLs e previews antes de enviar ao usuário
+applyTo: "**"
+---
+
+# Validar antes de compartilhar
+
+Antes de enviar ao usuário qualquer URL, link, preview, endpoint, tela ou build para visualização:
+
+1. **Confirmar por conta própria** que está ok (HTTP 200, conteúdo correto, serviço no ar).
+2. **Só compartilhar depois** de validar — nunca enviar link “para testar”.
+3. Se falhar, **corrigir ou reiniciar** o ambiente antes de informar o link.
+
+Exemplos: Swagger UI, health checks, frontend local, deploy em produção.
